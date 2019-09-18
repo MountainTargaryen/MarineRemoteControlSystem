@@ -1,0 +1,69 @@
+* {
+	padding: 0px;
+	margin: 0px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	/* Firefox */
+	-webkit-box-sizing: border-box;
+	/* Safari */
+}
+
+body {
+	padding: 0;
+	margin: 0;
+	text-align: center;
+}
+
+#container {
+	width: 1280px;
+	margin: 0 auto;
+	/*	background-color: darkblue;  */
+	text-align: left;
+}
+
+#header {
+	width: 100%;
+	background-color: darkblue;
+}
+
+a {
+	font-size: 22px;
+	text-decoration: none;
+	color: white;
+	font-size: 20px;
+}
+
+#meau {
+	width: 100;
+	height: 35px;
+	background-color: darkblue;
+}
+
+ul {
+	float: left;
+	margin: 0px;
+	padding: 2px;
+	list-style: none;
+}
+
+#meau li {
+	height: 30px;
+	float: left;
+	margin-left: 20px;
+	margin-right: 20px;
+	text-align: center;
+	line-height: 30px;
+	color: white;
+	font-size: 25px;
+	cursor: pointer;
+}
+
+#content {
+	width: 100%;
+	height: 795px;
+}
+
+#footer {
+	width: 100%;
+	height: 50px;
+}

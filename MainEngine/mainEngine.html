@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>基于web的船舶主机遥控实训仿真系统</title>
+		<link rel="icon" type="image/png" href="img/dlmutou.png" />
+		<link rel="stylesheet" href="css/bridge.css" type="text/css" />
+		<link rel="stylesheet" href="css/common.css" type="text/css" />
+		<link rel="stylesheet" href="css/controlPanel.css" type="text/css" />
+		<link rel="stylesheet" href="css/controlRoom.css" type="text/css" />
+		<link rel="stylesheet" href="css/homepage.css" type="text/css" />
+		<link rel="stylesheet" href="css/threeD.css" type="text/css" />
+		<link rel="stylesheet" href="css/telegraph.css" type="text/css" />
+		<link rel="stylesheet" href="css/local.css" type="text/css" />
+		<link rel="stylesheet" href="css/schematicDiagram.css" type="text/css" />
+		<link rel="stylesheet" href="css/diagram.css" type="text/css" />
+	</head>
+	<script>
+		window.onload = function() {
+
+			rmp = 0;
+			GetData1();
+			GetData2();
+			dataset1 = [{
+				label: "index",
+				data: data1,
+				color: "blue"
+			}];
+			dataset2 = [{
+				label: "RPM",
+				data: data2,
+				color: "blue"
+			}];
+			$.plot($("#flot-placeholder1"), dataset1, options1);
+			$.plot($("#flot-placeholder2"), dataset2, options2);
+
+			function update() {
+				if(trmp >= 0 || brmp >= 0) {
+					calculate();
+				}
+				GetData1();
+				GetData2();
+				$.plot($("#flot-placeholder1"), dataset1, options1);
+				$.plot($("#flot-placeholder2"), dataset2, options2);
+								
+				//集控室杠杆随着集控室车钟的变化而变化
+				bpointerLever1(rmp, 110, 230, 'cCanvas1');
+				//集控室和驾控台表盘指针及示数随着集控室车钟的变化而变化
+				pointerRotate(rmp * 0.75, 'cMERPMPointer');
+				pointerRotate(rmp * 0.75, 'bMERPMPointer');
+				innerChange(rmp, 'RMP', 'cMERPM');
+				innerChange(rmp, 'RMP', 'bMERPM');
+				setTimeout(update, 2000);
+				
+			}
+			update();
+
+		}
+	</script>
+
+	<body>
+		<div id="container">
+			<div id="header">
+				<img src="img/header1.png" width="100%" />
+			</div>
+			<div id="meau">
+				<ul>
+					<li id="ahomepage">主界面</li>
+					<li id="abridge">驾驶台</li>
+					<li id="acontrolRoom">集控室</li>
+					<li id="atelegraph">集控室车钟</li>
+					<li id="alocal">机旁</li>
+					<li id="acontrolPanel">控制面板</li>
+					<li id="adiagram">输入输出曲线</li>
+					<li id="aschematicDiagram">气动操纵单元</li>
+					<li id="athreeD">3D模型</li>
+				</ul>
+			</div>
+
+			<div id="content">
+				<div id="start">
+					<img src="img/schoolship.jpg" width="100%" height="795px" />
+				</div>
+				<div id="homepage">
+					<img src="img/mainselect.bmp" width="100%" height="795px" usemap="#mainEngine" />
+					<div id="hpicture">
+						<img id="hbridge" src="img/bridgeed.png">
+						<img id="hcontrolRoom" src="img/controlRoomed.png" />
+						<img id="hcontrolPanel" src="img/controlPaneled.bmp" />
+						<img id="hlocal" src="img/localed.bmp" />
+						<img id="htelegraph" src="img/maininterface_fuel_back1.bmp" />
+					</div>
+				</div>
+				<!--          驾控室部分               -->
+				<div id="bridge">
+					<div id="bWorkingCondition1">
+						<div id="bAtSea">Stand By</div>
+						<div id="bDeadband"></div>
+						<div id="bECR">Bridge</div>
+						<div id="bInvailid">Eng Ready</div>
+						<div id="bIOTest">System Ready</div>
+					</div>
+					<div id="bPanel">
+						<canvas id="bCanvas" width="900px" height="600px">你的浏览器不支持canvas</canvas>
+						<img id="bMERPMPointer" src="img/pointer.png" height="130px" />
+						<img id="bStartAirPressPointer" src="img/pointer.png" height="100px" />
+						<img id="bActuatorPosFeedbackPointer" src="img/pointer.png" height="100px" />
+						<div id="bMERPM">0 RMP</div>
+						<div id="bStartAirPress">26 bar</div>
+						<div id="bActuatorPosFeedback">12 %</div>
+						<div id="bState">Running</div>
+
+						<!--          驾驶台的电报系统            -->
+						<div id="btelegraphbox">
+							<img id="btelegraph1" src="img/ecr_telegraph_bk - 副本1.bmp" />
+							<img id="btelegraph1lever" src="img/ecr_telegraph_index.bmp.bmp">
+							<div id="btelegraph1LedBox1">
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+								<div class="btelegraph1Led1"></div>
+							</div>
+							<div id="btelegraph1LedBox2">
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+								<div class="btelegraph1Led2"></div>
+							</div>
+							<div id="btelegraphButtonBox1">
+								<div id="bbridge">Bridge
+									<div id="bbridgeLed"></div>
+								</div>
+								<div id="becr">ECR
+									<div id="btecrLed"></div>
+								</div>
+								<div id="blocal">Local
+									<div id="blocalLed"></div>
+								</div>
+							</div>
+							<div id="btelegraphButtonBox2">
+								<div id="batSea">At sea
+									<div id="batSeaLed"></div>
+								</div>
+								<div id="bstaBy">Sta. by
+									<div id="bstaByLed">
+									</div>
+								</div>
+								<div id="bfwe">FWE
+									<div id="bfweLed"></div>
+								</div>
+							</div>
+							<div id="bemergencyStop">Emergency Stop</div>
+							<div id="btelegraph1Text1">STOP</div>
+						</div>
+
+					</div>
+					<div id="bWorkingCondition2">
+						<div id="bclear"></div>
+						<div id="bAlarm">Alarm</div>
+						<div id="bLimiters">Limiters</div>
+						<div id="bControlPos">Control Pos</div>
+						<div id="bMiscMenu">Misc Menu</div>
+						<div id="bFineTuning">Fine Tuning</div>
+						<div id="bSafetySys">Safety Sys</div>
+						<div id="bEngineState">Engine State</div>
+						<div id="bEngineMode">Engine Mode</div>
+						<div id="bSeqDiagram">Seq.Diagram</div>
+						<div id="bHome">HOME</div>
+					</div>
+				</div>
+
+				<!--          集控室部分               -->
+				<div id="controlRoom">
+					<div id="cWorkingCondition1">
+						<div id="cStandBy">Stand By</div>
+						<div id="cDeadband"></div>
+						<div id="cInvaild1">ECR</div>
+						<div id="cInvailid2">Eng N Ready</div>
+						<div id="cIOTest">System Ready</div>
+					</div>
+					<div id="cPanel">
+						<img id="cPanelPicture" src="img/pancel.bmp" />
+						<canvas id="cCanvas" width="900px" height="600px">你的浏览器不支持canvas</canvas>
+						<canvas id="cCanvas1" width="300px" height="600px">你的浏览器不支持canvas</canvas>
+						<img id="cMERPMPointer" src="img/pointer.png" height="130px" />
+						<img id="cStartAirPressPointer" src="img/pointer.png" height="100px" />
+						<img id="cActuatorPosFeedbackPointer" src="img/pointer.png" height="100px" />
+
+						<div id="cMERPM">0 RMP</div>
+						<div id="cStartAirPress">26 bar</div>
+						<div id="cActuatorPosFeedback">26 %</div>
+						<div id="cState">Running</div>
+					</div>
+					<div id="cWorkingCondition2">
+						<div id="cAlarm">Alarm</div>
+						<div id="cLimiters">Limiters</div>
+						<div id="cControlPos">Control Pos</div>
+						<div id="cMiscMenu">Misc Menu</div>
+						<div id="cFineTuning">Fine Tuning</div>
+						<div id="cSafetySys">Safety Sys</div>
+						<div id="cEngineState">Engine State</div>
+						<div id="cEngineMode">Engine Mode</div>
+						<div id="cSeqDiagram">Seq.Diagram</div>
+						<div id="cHome">HOME</div>
+					</div>
+				</div>
+
+				<!--          控制面板部分               -->
+				<div id="controlPanel">
+					<div id="cpBgc">
+						<div id="cpBorder">
+							<div class="cpButtonBox1">
+								<div id="fuelCamAhead">FUEL CAM AHEAD</div>
+								<div id="limiInGovCancel">LIMI. GOV.CANCEL</div>
+								<div id="turnGearEngaged">TURN. GEAR ENGAGED</div>
+								<div id="manStValveInService">MAN ST. VALVE IN SERVICE</div>
+								<div id="goverEngaged">GOVER. ENGAGED</div>
+								<div id="slowDownActive">SLOW DOWN ACTIVE</div>
+								<div id="shutDownActive">SHUT DOWN ACTIVE</div>
+								<div id="fuelCamAstern">FUEL CAM ASTERN</div>
+								<div id="slowTurning">SLOW TURNING</div>
+								<div id="turnGearDiseng">TURN. GEAR DISENG</div>
+								<div id="manStValueBlocked">MAN ST. VALVE BLOCKED</div>
+								<div id="stAirDistribBlocked">ST.AIR DISTRIB BLOCKED</div>
+								<div id="slowDownCancel">SLOW DOWN CANCEL</div>
+								<div id="shutDownCancel">SHUT DOWN CANCEL</div>
+								<div id="bridgeControl">BRIDGE CONTROL</div>
+								<div id="ecrControl">ECR CONTROL</div>
+								<div id="localConreol">LOCAL CONTROL</div>
+								<div id="lampTest1">LAMP TEST</div>
+							</div>
+							<div class="cpButtonBox2">
+								<div id="auxBlower1startRun">AUX BLOWER 1. START RUN</div>
+								<div id="auxBlower1stop">AUX BLOWER 1. STOP</div>
+								<div id="auxBlower2startRun">AUX BLOWER 2. START RUN</div>
+								<div id="auxBlower2stop">AUX BLOWER 2. STOP</div>
+								<div id="auxBlower3startRun">AUX BLOWER 3. START RUN</div>
+								<div id="auxBlower3stop">AUX BLOWER 3. STOP</div>
+								<div id="warnningAuxBlower">WARNNING AUX BLOWER</div>
+								<div id="lampTest2">LAMP TEST</div>
+							</div>
+							<img id="kLogo" src="img/k_logo.bmp" width="80px" />
+							<img id="auxHandle" src="img/auxHandle.png" />
+							<canvas id="cpCanvas" width="250px" height="80px">你的浏览器不支持canvas</canvas>
+							<div id="cpHandleLeft"></div>
+							<div id="cpHandleRight"></div>
+						</div>
+					</div>
+				</div>
+
+				<!--          集控室车钟              -->
+				<div id="telegraph">
+					<div id="tbutton1">
+						<div id="tcancelSHD">Cancel SHD
+							<div id="tcancelSHDLed"></div>
+						</div>
+						<div id="tcancelSLD">Cancel SLD
+							<div id="tcancelSLDLed"></div>
+						</div>
+						<div id="tcancelLim">Cancel lim.
+							<div id="tcancelLimLed"></div>
+						</div>
+					</div>
+					<div id="tbutton2">
+						<div id="tinCom">In Com.
+							<div id="tinComLed"></div>
+						</div>
+						<div id="tsoundOff">Sound off
+							<div id="tsoundOffLed"></div>
+						</div>
+						<div id="talarmAck">Alarm ack.
+							<div id="talarmAckLed"></div>
+						</div>
+					</div>
+					<div id="thandlebox">
+						<div id="tengineControlRoom">ENGINE <br/>CONTROL ROOM</div>
+						<div id="tbridge1">BRIDGE</div>
+						<img id="thandle" src="img/handle.png" />
+					</div>
+
+					<!--          集控室的电报系统            -->
+					<div id="ttelegraphbox">
+						<img id="ttelegraph1" src="img/ecr_telegraph_bk - 副本1.bmp" />
+						<img id="ttelegraph1lever" src="img/ecr_telegraph_index.bmp.bmp">
+						<div id="ttelegraph1LedBox1">
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+							<div class="ttelegraph1Led1"></div>
+						</div>
+						<div id="ttelegraph1LedBox2">
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+							<div class="ttelegraph1Led2"></div>
+						</div>
+						<div id="ttelegraphButtonBox1">
+							<div id="tbridge">Bridge
+								<div id="tbridgeLed"></div>
+							</div>
+							<div id="tecr">ECR
+								<div id="ttecrLed"></div>
+							</div>
+							<div id="tlocal">Local
+								<div id="tlocalLed"></div>
+							</div>
+						</div>
+						<div id="ttelegraphButtonBox2">
+							<div id="tatSea">At sea
+								<div id="tatSeaLed"></div>
+							</div>
+							<div id="tstaBy">Sta. by
+								<div id="tstaByLed"></div>
+							</div>
+							<div id="tfwe">FWE
+								<div id="tfweLed"></div>
+							</div>
+						</div>
+						<div id="temergencyStop">Emergency Stop</div>
+						<div id="ttelegraph1Text1">STOP</div>
+						<img id="ttelegraph2" src="img/ecrTelegraph1.bmp" />
+						<img id="ttelegraph2lever" src="img/ecrLever.bmp" />
+					</div>
+					<div id="ttelegraph2watch">STOP</div>
+				</div>
+
+				<!--          机旁               -->
+				<div id="local">
+					<div id="lbox1">
+						<div id="lbox1box">
+							<img id="lpancel1" src="img/lPancel1.png" />
+							<div id="lbox1Ledbox">
+								<div id="laheadLed"></div>
+								<div id="lasternLed"></div>
+								<div id="lshutDownLed"></div>
+								<div id="lbridgeControlLed"></div>
+								<div id="lTurningGearEngagedLed"></div>
+								<div id="lcontrolRoomControlLed"></div>
+								<div id="lauxBlowerRunningLed"></div>
+								<div id="lemergencyControlLed"></div>
+							</div>
+							<div id="lbuttonCancelShutDown"></div>
+							<div id="lbuttonLampTest"></div>
+							<canvas id="lbox1canvas" width="360" height="250">你的浏览器不支持canvas</canvas>
+							<img id="llogo" src="img/logo.png" />
+							<img id="lpointer" src="img/pointer1.png" />
+						</div>
+					</div>
+					<div id="lbox2">
+						<div id="lbox2box">
+							<div id="lbox2box1">
+								<div id="lwrWay">
+									Wr.<br />way
+									<div id="lwrWayled"></div>
+								</div>
+								<div id="llaTest">
+									La.<br />test
+									<div id="llaTestled"></div>
+								</div>
+							</div>
+							<div id="lbox2box2">
+								<div id="lbcr">
+									BCR
+									<div id="lbcrled"></div>
+								</div>
+								<div id="lecr">
+									ECR
+									<div id="lecrled"></div>
+								</div>
+								<div id="lloc">
+									Loc.
+									<div id="llocled"></div>
+								</div>
+							</div>
+							<div id="lbox2box3">
+								<div id="lnavFull">
+									Nav<br />Full
+									<div id="lnavFullled"></div>
+								</div>
+								<div id="lfull">
+									Full
+									<div id="lfullled"></div>
+								</div>
+								<div id="lhalf">
+									Half
+									<div id="lhalfled"></div>
+								</div>
+								<div id="lslow">
+									Slow
+									<div id="lslowled"></div>
+								</div>
+								<div id="ldeSlow">
+									De.<br />Slow
+									<div id="ldeSlowled"></div>
+								</div>
+								<div id="sstop">
+									Stop
+									<div id="lstopled"></div>
+								</div>
+								<div id="ldeSlow1">
+									De.<br />Slow
+									<div id="ldeSlow1led"></div>
+								</div>
+								<div id="lslow1">
+									Slow
+									<div id="lslow1led"></div>
+								</div>
+								<div id="lhalf1">
+									Half
+									<div id="lhalf1led"></div>
+								</div>
+								<div id="lfull1">
+									Full
+									<div id="lfull1led"></div>
+								</div>
+								<div id="lemAst">
+									Em.<br />Ast
+									<div id="lemAstled"></div>
+								</div>
+							</div>
+
+							<div id="lbox2box4">
+								<div id="latSea">
+									At<br />Sea
+									<div id="latSealed"></div>
+								</div>
+								<div id="lstBy">
+									St.<br />By
+									<div id="lstByled"></div>
+								</div>
+								<div id="lfwe">
+									FWE
+									<div id="lfweled"></div>
+								</div>
+							</div>
+							<div id="lbox2boxStop">
+								EMERGENCY<br />STOP
+								<div id="lemergencyStop"></div>
+							</div>
+						</div>
+					</div>
+					<div id="lhandleBox1">
+						&nbsp; REMOTE &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; LOCAL
+						<img id="lhandle1" src="img/handle.png" />
+					</div>
+					<div id="lhandleBox2">
+						&nbsp; ASTERN &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AHEAD
+						<img id="lhandle2" src="img/handle.png" />
+					</div>
+					<div id="lbuttonStartBox">
+						START
+						<div id="lbuttonStart"></div>
+					</div>
+					<div id="lbuttonStopBox">
+						STOP
+						<div id="lbuttonStop"></div>
+					</div>
+					<img id="lwheel1" src="img/lwheelx.png" />
+					<img id="lwheel2" src="img/lwheel2.bmp" />
+					<img id="lpancel" src="img/localPancel.png" />
+					<canvas id="lwheel2canvas" width="140" height="210">你的浏览器不支持canvas</canvas>
+					<div id="lwheel1Left"></div>
+					<div id="lwheel1Right"></div>
+					<div id="lwheel2Left"></div>
+					<div id="lwheel2Right"></div>
+				</div>
+
+				<!--          输入输出曲线               -->
+				<div id="diagram">
+					<div id="line-title1">油门刻度</div>
+					<div id="flot-placeholder1"></div>
+					<div id="line-title2">主机转速</div>
+					<div id="flot-placeholder2"></div>
+				</div>
+
+				<!--          气动逻辑部分               -->
+				<div id="schematicDiagram">
+
+					<canvas id="sdc" width="1280" height="800">你的浏览器不支持canvas</canvas>
+					<img src="img/schematicDiagram.BMP" height="auto" />
+				</div>
+
+				<!--          3D模型部分               -->
+				<div id="threeD">
+					<img id="mainneng10" src="img/maineng10.bmp" />
+					<canvas id="threeDC1">你的浏览器不支持canvas</canvas>
+					<canvas id="threeDC2">你的浏览器不支持canvas</canvas>
+				</div>
+			</div>
+			<div id="footer">
+				<img src="img/footer.png" width="100%" height="100%" />
+			</div>
+
+		</div>
+		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/jquery.flot.axislabels.js"></script>
+		<script type="text/javascript" src="js/jquery.flot.js"></script>
+		<script type="text/javascript" src="js/jquery.flot.symbol.js"></script>
+		<script type="text/javascript" src="js/calculate.js"></script>
+		<script type="text/javascript" src="js/schematicDiagram.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+		<script type="text/javascript" src="js/bridge.js"></script>
+		<script type="text/javascript" src="js/controlRoom.js"></script>
+		<script type="text/javascript" src="js/controlPanel.js"></script>
+		<script type="text/javascript" src="js/telegraph.js"></script>
+		<script type="text/javascript" src="js/local.js"></script>
+		<script type="text/javascript" src="js/threeD.js"></script>
+		<script type="text/javascript" src="js/diagram.js"></script>
+	</body>
+
+</html>
